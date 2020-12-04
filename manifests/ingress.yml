@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+    name: "iibclus-e644"
+    labels:
+        app: "iibclus-e644"
+    annotations:
+        kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+    rules:
+        - host: iib-clus8c18-iibclus-e644.41998b4fa1cd44bfa705.southeastasia.aksapp.io
+          http:
+            paths:
+            - path: /
+              backend:
+                serviceName: "iibclus-e644"
+                servicePort: 4414
