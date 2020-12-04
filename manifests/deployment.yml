@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "iibclus-e644"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "iibclus-e644"
+  template:
+    metadata:
+      labels:
+        app: "iibclus-e644"
+    spec:
+      containers:
+        - name: "iibclus-e644"
+          image: "pratikcontainerregis.azurecr.io/iibclus"
+          ports:
+          - containerPort: 4414
