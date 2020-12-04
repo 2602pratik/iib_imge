@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: "iibclus-e644"
+    labels:
+        app: "iibclus-e644"
+spec:
+    type: ClusterIP
+    ports:
+    - port: 4414
+      targetPort: 4414
+      protocol: TCP
+      name: http
+    selector:
+        app: "iibclus-e644"
