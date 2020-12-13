@@ -1,0 +1,50 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: pratikcontainerregis.azurecr.io
+        username: ${{ secrets.acr_pratikcontainerregis_username }}
+        password: ${{ secrets.acr_pratikcontainerregis_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/10.0.0.10" -f  "10.0.0.10/Dockerfile" -t pratikcontainerregis.azurecr.io/iibclus:${{ github.sha }}
+        docker push pratikcontainerregis.azurecr.io/iibclus:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_iibclus_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep iib-app | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace iib-app`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: iib-app
+        container-registry-url: pratikcontainerregis.azurecr.io
+        container-registry-username: ${{ secrets.acr_pratikcontainerregis_username }}
+        container-registry-password: ${{ secrets.acr_pratikcontainerregis_password }}
+        secret-name: iibclusdockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: iib-app
+        manifests: |
+          manifests/deployment-1.yml
+          manifests/service-1.yml
+        images: |
+          pratikcontainerregis.azurecr.io/iibclus:${{ github.sha }}
+        imagepullsecrets: |
+          iibclusdockerauth
