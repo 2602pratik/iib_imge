@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "iibapps-06af"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "iibapps-06af"
+  template:
+    metadata:
+      labels:
+        app: "iibapps-06af"
+    spec:
+      containers:
+        - name: "iibapps-06af"
+          image: "pratikcontainerregis.azurecr.io/iibapps"
+          ports:
+          - containerPort: 4414
