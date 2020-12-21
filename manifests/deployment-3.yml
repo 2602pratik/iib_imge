@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "iibapps-fb3c"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "iibapps-fb3c"
+  template:
+    metadata:
+      labels:
+        app: "iibapps-fb3c"
+    spec:
+      containers:
+        - name: "iibapps-fb3c"
+          image: "pratikcontainerregis.azurecr.io/iibapps"
+          ports:
+          - containerPort: 4414
